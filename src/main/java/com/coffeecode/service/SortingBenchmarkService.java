@@ -1,9 +1,12 @@
 package com.coffeecode.service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import com.coffeecode.comparisons.SortingComparison;
 import com.coffeecode.config.SortingConfiguration;
 import com.coffeecode.results.SortingResult;
-import com.coffeecode.comparisons.SortingComparison;
 
 public class SortingBenchmarkService {
 

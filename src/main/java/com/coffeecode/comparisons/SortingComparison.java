@@ -9,6 +9,7 @@ import com.coffeecode.algorithms.BubbleSort;
 import com.coffeecode.algorithms.HeapSort;
 import com.coffeecode.algorithms.MergeSort;
 import com.coffeecode.algorithms.QuickSort;
+import com.coffeecode.results.MemoryTestResult;
 
 public class SortingComparison {
     private final Map<String, SortingAlgorithm> algorithms;
