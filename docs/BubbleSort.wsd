@@ -1,0 +1,28 @@
+@startuml BubbleSort
+
+title Bubble Sort Algorithm
+
+actor User
+participant "BubbleSort" as BubbleSort
+participant "Array" as Array
+
+User -> BubbleSort: sort(array)
+activate BubbleSort
+
+BubbleSort -> Array: n = array.length
+BubbleSort -> Array: swapped = true
+
+alt while swapped == true
+    BubbleSort -> Array: swapped = false
+    loop for i = 1 to n - 1
+        alt if array[i - 1] > array[i]
+            BubbleSort -> Array: swap(array[i - 1], array[i])
+            BubbleSort -> Array: swapped = true
+        end
+    end
+end
+
+BubbleSort -> User: return sorted array
+deactivate BubbleSort
+
+@enduml
