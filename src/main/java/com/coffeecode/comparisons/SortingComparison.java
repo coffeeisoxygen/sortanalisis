@@ -11,26 +11,39 @@ import com.coffeecode.algorithms.MergeSort;
 import com.coffeecode.algorithms.QuickSort;
 
 public class SortingComparison {
-
-    private final Map<String, SortingFunction> algorithms;
+    private final Map<String, SortingAlgorithm> algorithms;
     private final int[] dataSet;
+    private final Random random;
+
+    @FunctionalInterface
+    private interface SortingAlgorithm {
+        void sort(int[] array);
+    }
 
     public SortingComparison(int size) {
         this.algorithms = new HashMap<>();
-        this.dataSet = generateRandomArray(size);
+        this.dataSet = new int[size];
+        this.random = new Random();
+        initializeDataSet();
         initializeAlgorithms();
     }
 
+    private void initializeDataSet() {
+        for (int i = 0; i < dataSet.length; i++) {
+            dataSet[i] = random.nextInt(10000); // Random numbers between 0 and 9999
+        }
+    }
+
     private void initializeAlgorithms() {
-        algorithms.put("Bubble Sort", BubbleSort::sort);
-        algorithms.put("Heap Sort", HeapSort::sort);
-        algorithms.put("Merge Sort", MergeSort::sort);
-        algorithms.put("Quick Sort", QuickSort::sort);
+        algorithms.put("BubbleSort", BubbleSort::sort);
+        algorithms.put("QuickSort", QuickSort::sort);
+        algorithms.put("MergeSort", MergeSort::sort);
+        algorithms.put("HeapSort", HeapSort::sort);
     }
 
     public Map<String, Long> measureExecutionTime() {
         Map<String, Long> results = new HashMap<>();
-
+        
         algorithms.forEach((name, algorithm) -> {
             int[] testArray = Arrays.copyOf(dataSet, dataSet.length);
             long time = measureSort(testArray, algorithm);
@@ -40,58 +53,70 @@ public class SortingComparison {
         return results;
     }
 
+    public Map<String, Long> measureExecutionTimeWithSortedArray() {
+        Map<String, Long> results = new HashMap<>();
+        
+        // Create sorted array
+        int[] sortedArray = Arrays.copyOf(dataSet, dataSet.length);
+        Arrays.sort(sortedArray);
+
+        algorithms.forEach((name, algorithm) -> {
+            int[] testArray = Arrays.copyOf(sortedArray, sortedArray.length);
+            long time = measureSort(testArray, algorithm);
+            results.put(name, time);
+        });
+
+        return results;
+    }
+
+    public Map<String, Long> measureExecutionTimeWithReverseArray() {
+        Map<String, Long> results = new HashMap<>();
+        
+        // Create reverse sorted array
+        int[] reverseArray = Arrays.copyOf(dataSet, dataSet.length);
+        Arrays.sort(reverseArray);
+        for (int i = 0; i < reverseArray.length / 2; i++) {
+            int temp = reverseArray[i];
+            reverseArray[i] = reverseArray[reverseArray.length - 1 - i];
+            reverseArray[reverseArray.length - 1 - i] = temp;
+        }
+
+        algorithms.forEach((name, algorithm) -> {
+            int[] testArray = Arrays.copyOf(reverseArray, reverseArray.length);
+            long time = measureSort(testArray, algorithm);
+            results.put(name, time);
+        });
+
+        return results;
+    }
+
     public Map<String, MemoryTestResult> measureDetailedMemoryUsage() {
         Map<String, MemoryTestResult> results = new HashMap<>();
+        Runtime runtime = Runtime.getRuntime();
 
         algorithms.forEach((name, algorithm) -> {
             int[] testArray = Arrays.copyOf(dataSet, dataSet.length);
-            Runtime runtime = Runtime.getRuntime();
+            
+            // Measure memory before sorting
+            runtime.gc(); // Request garbage collection
             long beforeMemory = runtime.totalMemory() - runtime.freeMemory();
-            long peakMemory = beforeMemory;
-
+            
             algorithm.sort(testArray);
-
+            
+            // Measure memory after sorting
+            runtime.gc(); // Request garbage collection
             long afterMemory = runtime.totalMemory() - runtime.freeMemory();
-            long memoryUsed = afterMemory - beforeMemory;
-            peakMemory = Math.max(peakMemory, afterMemory);
-
-            results.put(name, new MemoryTestResult(name, memoryUsed, peakMemory));
+            
+            results.put(name, new MemoryTestResult(afterMemory - beforeMemory));
         });
 
         return results;
     }
 
-    public Map<String, int[]> visualDemo(int sampleSize) {
-        Map<String, int[]> results = new HashMap<>();
-        int[] sample = Arrays.copyOf(dataSet, Math.min(sampleSize, dataSet.length));
-
-        algorithms.forEach((name, algorithm) -> {
-            int[] testArray = Arrays.copyOf(sample, sample.length);
-            algorithm.sort(testArray);
-            results.put(name, testArray);
-        });
-
-        return results;
-    }
-
-    private static long measureSort(int[] array, SortingFunction sorter) {
+    private long measureSort(int[] array, SortingAlgorithm algorithm) {
         long startTime = System.nanoTime();
-        sorter.sort(array);
-        return System.nanoTime() - startTime;
-    }
-
-    private static int[] generateRandomArray(int size) {
-        Random random = new Random();
-        int[] array = new int[size];
-        for (int i = 0; i < size; i++) {
-            array[i] = random.nextInt(10000);
-        }
-        return array;
-    }
-
-    @FunctionalInterface
-    public interface SortingFunction {
-
-        void sort(int[] array);
+        algorithm.sort(array);
+        long endTime = System.nanoTime();
+        return endTime - startTime;
     }
 }

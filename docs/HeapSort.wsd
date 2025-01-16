@@ -1,0 +1,26 @@
+@startuml HeapSort
+
+title Heap Sort Algorithm
+
+actor User
+participant "HeapSort" as HeapSort
+participant "Array" as Array
+
+User -> HeapSort: sort(array)
+activate HeapSort
+
+HeapSort -> Array: n = array.length
+
+loop build heap
+    HeapSort -> Array: heapify(array, n, i) for i = n/2 - 1 to 0
+end
+
+loop sort array
+    HeapSort -> Array: swap(array[0], array[i])
+    HeapSort -> Array: heapify(array, i, 0)
+end
+
+HeapSort -> User: return sorted array
+deactivate HeapSort
+
+@enduml

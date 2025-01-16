@@ -1,0 +1,24 @@
+@startuml QuickSort
+
+title Quick Sort Algorithm
+
+actor User
+participant "QuickSort" as QuickSort
+participant "Array" as Array
+
+User -> QuickSort: sort(array)
+activate QuickSort
+
+QuickSort -> Array: low = 0, high = array.length - 1
+QuickSort -> QuickSort: quickSort(array, low, high)
+
+loop if low < high
+    QuickSort -> QuickSort: pi = partition(array, low, high)
+    QuickSort -> QuickSort: quickSort(array, low, pi - 1)
+    QuickSort -> QuickSort: quickSort(array, pi + 1, high)
+end
+
+QuickSort -> User: return sorted array
+deactivate QuickSort
+
+@enduml

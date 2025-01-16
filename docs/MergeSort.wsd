@@ -1,0 +1,25 @@
+@startuml MergeSort
+
+title Merge Sort Algorithm
+
+actor User
+participant "MergeSort" as MergeSort
+participant "Array" as Array
+
+User -> MergeSort: sort(array)
+activate MergeSort
+
+MergeSort -> Array: left = 0, right = array.length - 1
+MergeSort -> MergeSort: mergeSort(array, left, right)
+
+loop if left < right
+    MergeSort -> Array: mid = (left + right) / 2
+    MergeSort -> MergeSort: mergeSort(array, left, mid)
+    MergeSort -> MergeSort: mergeSort(array, mid + 1, right)
+    MergeSort -> MergeSort: merge(array, left, mid, right)
+end
+
+MergeSort -> User: return sorted array
+deactivate MergeSort
+
+@enduml
