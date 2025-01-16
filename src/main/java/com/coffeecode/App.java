@@ -1,6 +1,7 @@
 package com.coffeecode;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +52,7 @@ public class App {
 
             System.out.println("\nCharts generated in 'reports' directory");
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             executor.shutdownNow();
             System.err.println("Error during benchmark: " + e.getMessage());
             e.printStackTrace();
