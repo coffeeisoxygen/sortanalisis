@@ -55,7 +55,11 @@ public class App {
         } catch (IOException e) {
             executor.shutdownNow();
             System.err.println("Error during benchmark: " + e.getMessage());
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.printf("Error in %s: %s%n",
+                    Thread.currentThread().getName(),
+                    e.getMessage());
+            e.printStackTrace(System.err);
         }
     }
 
@@ -72,4 +76,5 @@ public class App {
                 i++;
             }
         };
-    }}
+    }
+}
